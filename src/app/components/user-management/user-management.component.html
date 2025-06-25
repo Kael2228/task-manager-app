@@ -1,0 +1,25 @@
+<div class="user-management">
+  <h2>Zarządzanie użytkownikami</h2>
+
+  <div class="add-user-form">
+    <h3>Dodaj nowego użytkownika</h3>
+    <input type="text" [(ngModel)]="newUser.username" placeholder="Nazwa użytkownika" />
+    <input type="email" [(ngModel)]="newUser.email" placeholder="Email" />
+    <input type="password" [(ngModel)]="newUser.password" placeholder="Hasło" />
+    <select [(ngModel)]="newUser.role">
+      <option value="user">User</option>
+      <option value="admin">Admin</option>
+    </select>
+    <button (click)="addUser()">Dodaj użytkownika</button>
+  </div>
+
+  <div class="user-list">
+    <h3>Lista użytkowników</h3>
+    <ul>
+      <li *ngFor="let user of users">
+        {{ user.username }} ({{ user.email }}) - rola: {{ user.role }}
+        <button (click)="deleteUser(user.id)">Usuń</button>
+      </li>
+    </ul>
+  </div>
+</div>

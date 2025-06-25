@@ -1,0 +1,63 @@
+<div class="task-list-container">
+  <h2>Lista zadań</h2>
+
+  <button (click)="openAddForm()">Dodaj nowe zadanie</button>
+
+  <!-- Formularz dodawania / edycji -->
+  <app-task-form
+    *ngIf="showForm"
+    [taskToEdit]="editingTask"
+    (formSubmit)="onFormSubmit($event)"
+    (formCancel)="onFormCancel()"
+  ></app-task-form>
+
+  <!-- Filtry -->
+  <form [formGroup]="filterForm" class="filters">
+    <label>
+      Status:
+      <select formControlName="status">
+        <option value="">Wszystkie</option>
+        <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+      </select>
+    </label>
+    <label>
+      Priorytet:
+      <select formControlName="priority">
+        <option value="">Wszystkie</option>
+        <option *ngFor="let priority of priorities" [value]="priority">{{ priority }}</option>
+      </select>
+    </label>
+    <label>
+      Przypisany użytkownik:
+      <input type="text" formControlName="assignedUser" placeholder="Email użytkownika" />
+    </label>
+  </form>
+
+  <!-- Sortowanie -->
+  <div class="sorting">
+    <button (click)="setSort('priority')">
+      Sortuj po priorytecie
+      <span *ngIf="sortField === 'priority'">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+    </button>
+    <button (click)="setSort('dueDate')">
+      Sortuj po terminie
+      <span *ngIf="sortField === 'dueDate'">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+    </button>
+  </div>
+
+  <!-- Lista zadań -->
+  <ul class="task-list">
+    <li *ngFor="let task of filteredTasks">
+      <h3>{{ task.title }}</h3>
+      <p>{{ task.description }}</p>
+      <p>Priorytet: {{ task.priority }}</p>
+      <p>Status: {{ task.status }}</p>
+      <p>Termin: {{ task.dueDate | date }}</p>
+      <p>Przypisany: {{ task.assignedUser || 'Brak' }}</p>
+
+      <button (click)="markAsDone(task)" [disabled]="task.status === 'done'">Oznacz jako wykonane</button>
+      <button (click)="openEditForm(task)">Edytuj</button>
+      <button (click)="deleteTask(task)">Usuń</button>
+    </li>
+  </ul>
+</div>

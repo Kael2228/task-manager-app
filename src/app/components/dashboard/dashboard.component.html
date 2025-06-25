@@ -1,0 +1,14 @@
+<div class="dashboard-container">
+  <h2>Witaj, {{ user?.username }}</h2>
+  <p>Rola: {{ user?.role }}</p>
+
+  <div class="actions">
+    <button (click)="goToTasks()">Moje Zadania</button>
+
+    <button *ngIf="user?.role === 'admin'" (click)="goToAdmin()">
+      Panel administratora
+    </button>
+
+    <button (click)="logout()">Wyloguj się</button>
+  </div>
+</div>

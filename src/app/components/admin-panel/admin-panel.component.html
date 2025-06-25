@@ -1,0 +1,55 @@
+<div class="admin-panel-container">
+  <h2>Panel Administratora</h2>
+
+  <section>
+    <h3>Użytkownicy</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Nazwa</th>
+          <th>Email</th>
+          <th>Rola</th>
+          <th>Akcje</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
+          <td>
+            <button (click)="deleteUser(user.id)">Usuń</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h3>Zadania</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Tytuł</th>
+          <th>Przypisany użytkownik</th>
+          <th>Status</th>
+          <th>Akcje</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of tasks">
+          <td>{{ task.id }}</td>
+          <td>{{ task.title }}</td>
+          <td>{{ task.assignedUser }}</td>
+          <td>{{ task.status }}</td>
+          <td>
+            <button (click)="deleteTask(task.id)">Usuń</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</div>

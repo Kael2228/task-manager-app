@@ -1,0 +1,55 @@
+<form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="task-form">
+  <h3>{{ taskToEdit ? 'Edytuj zadanie' : 'Dodaj nowe zadanie' }}</h3>
+
+  <label>
+    Tytuł *
+    <input formControlName="title" />
+    <div *ngIf="taskForm.controls['title'].invalid && taskForm.controls['title'].touched" class="error">
+      Pole jest wymagane.
+    </div>
+  </label>
+
+  <label>
+    Opis
+    <textarea formControlName="description"></textarea>
+  </label>
+
+  <label>
+    Priorytet *
+    <select formControlName="priority">
+      <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+    </select>
+  </label>
+
+  <label>
+    Status *
+    <select formControlName="status">
+      <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+    </select>
+  </label>
+
+  <label>
+    Termin realizacji *
+    <input type="date" formControlName="dueDate" />
+  </label>
+
+  <label>
+    Przypisany użytkownik (email)
+    <input formControlName="assignedUser" />
+  </label>
+
+  <label>
+    Tag-i (oddziel przecinkami)
+    <input formControlName="tags" />
+  </label>
+
+  <label>
+    Załączniki (linki, oddzielone przecinkami)
+    <input formControlName="attachments" />
+  </label>
+
+  <div class="buttons">
+    <button type="submit" [disabled]="taskForm.invalid">{{ taskToEdit ? 'Zapisz' : 'Dodaj' }}</button>
+    <button type="button" (click)="onCancel()">Anuluj</button>
+  </div>
+</form>
