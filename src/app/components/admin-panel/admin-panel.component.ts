@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth.service';
+import { FirebaseAuthService } from '../../services/firebase-auth.service';
 import { TaskService } from '../../services/task.service';
 import { User } from '../../models/user.model';
 import { Task } from '../../models/task.model';
@@ -18,7 +18,7 @@ export class AdminPanelComponent implements OnInit {
   tasks: Task[] = [];
 
   constructor(
-    private authService: AuthService,
+    private authService: FirebaseAuthService,
     private taskService: TaskService,
     private router: Router
   ) {}
@@ -28,21 +28,37 @@ export class AdminPanelComponent implements OnInit {
     this.loadTasks();
   }
 
-  loadUsers(): void {
-    this.users = this.authService.getAllUsers();
+  async loadUsers(): Promise<void> {
+    try {
+      this.users = await this.authService.getAllUsers();
+    } catch (error) {
+      console.error('Błąd podczas ładowania użytkowników:', error);
+    }
   }
 
-  loadTasks(): void {
-    this.tasks = this.taskService.getTasks();
+  async loadTasks(): Promise<void> {
+    try {
+      this.tasks = await this.taskService.getTasks();
+    } catch (error) {
+      console.error('Błąd podczas ładowania zadań:', error);
+    }
   }
 
-  deleteUser(userId: string): void {
-    this.authService.deleteUser(userId);
-    this.loadUsers();
+  async deleteUser(userId: string): Promise<void> {
+    try {
+      await this.authService.deleteUser(userId);
+      await this.loadUsers();
+    } catch (error) {
+      console.error('Błąd podczas usuwania użytkownika:', error);
+    }
   }
 
-  deleteTask(taskId: string): void {
-    this.taskService.deleteTask(taskId);
-    this.loadTasks();
+  async deleteTask(taskId: string): Promise<void> {
+    try {
+      await this.taskService.deleteTask(taskId);
+      await this.loadTasks();
+    } catch (error) {
+      console.error('Błąd podczas usuwania zadania:', error);
+    }
   }
 }

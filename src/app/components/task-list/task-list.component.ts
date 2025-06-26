@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Task, Priority, Status } from '../../models/task.model';
 import { TaskService } from '../../services/task.service';
-import { AuthService } from '../../services/auth.service';
+import { FirebaseAuthService } from '../../services/firebase-auth.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { TaskFormComponent } from '../task-form/task-form.component';
 import { CommonModule } from '@angular/common';
@@ -27,13 +27,14 @@ export class TaskListComponent implements OnInit {
   sortDirection: 'asc' | 'desc' = 'asc';
 
   currentUserEmail = '';
+  currentUserRole: 'admin' | 'user' | null = null;
 
   editingTask: Task | null = null;
   showForm = false;
 
   constructor(
     private taskService: TaskService,
-    private authService: AuthService,
+    private authService: FirebaseAuthService,
     private fb: FormBuilder
   ) {
     this.filterForm = this.fb.group({
@@ -43,8 +44,11 @@ export class TaskListComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.currentUserEmail = this.authService.getCurrentUser()?.email || '';
+  async ngOnInit(): Promise<void> {
+    const currentUser = await this.authService.getCurrentUser();
+    this.currentUserEmail = currentUser?.email || '';
+    this.currentUserRole = currentUser?.role || null;
+
     this.loadTasks();
 
     this.filterForm.valueChanges.subscribe(() => {
@@ -54,12 +58,11 @@ export class TaskListComponent implements OnInit {
 
   loadTasks(): void {
     const allTasks = this.taskService.getTasks();
-    const currentUser = this.authService.getCurrentUser();
 
-    if (currentUser?.role === 'admin') {
+    if (this.currentUserRole === 'admin') {
       this.tasks = allTasks;
     } else {
-      this.tasks = allTasks.filter(t => t.assignedUser === currentUser?.email);
+      this.tasks = allTasks.filter(t => t.assignedUser === this.currentUserEmail);
     }
 
     this.applyFilters();
@@ -115,8 +118,7 @@ export class TaskListComponent implements OnInit {
   }
 
   deleteTask(task: Task): void {
-    const currentUser = this.authService.getCurrentUser();
-    if (currentUser?.role === 'admin' || task.assignedUser === currentUser?.email) {
+    if (this.currentUserRole === 'admin' || task.assignedUser === this.currentUserEmail) {
       this.taskService.deleteTask(task.id);
       this.loadTasks();
     } else {

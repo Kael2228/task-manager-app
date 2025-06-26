@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Task, Priority, Status } from '../../models/task.model';
-import { AuthService } from '../../services/auth.service';
+import { FirebaseAuthService } from '../../services/firebase-auth.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -23,7 +23,7 @@ export class TaskFormComponent implements OnInit {
 
   currentUserEmail = '';
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private authService: FirebaseAuthService) {
     this.taskForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
       description: [''],
@@ -36,8 +36,10 @@ export class TaskFormComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.currentUserEmail = this.authService.getCurrentUser()?.email || '';
+  async ngOnInit(): Promise<void> {
+    const currentUser = await this.authService.getCurrentUser();
+    this.currentUserEmail = currentUser?.email || '';
+
     if (this.taskToEdit) {
       this.populateForm(this.taskToEdit);
     } else {

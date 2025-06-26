@@ -1,59 +1,69 @@
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';  // <-- import FormsModule
+import { FormsModule } from '@angular/forms';
 import { User } from '../../models/user.model';
-import { AuthService } from '../../services/auth.service';
+import { FirebaseAuthService } from '../../services/firebase-auth.service';
 import { CommonModule } from '@angular/common';
+
+interface NewUserForm {
+  username: string;
+  email: string;
+  password: string;
+  role: 'admin' | 'user';
+}
 
 @Component({
   selector: 'app-user-management',
-  standalone: true,            // <-- standalone component
-  imports: [FormsModule, CommonModule],      // <-- import FormsModule tutaj
+  standalone: true,
+  imports: [FormsModule, CommonModule],
   templateUrl: './user-management.component.html',
   styleUrls: ['./user-management.component.scss']
 })
 export class UserManagementComponent implements OnInit {
   users: User[] = [];
-  newUser: Partial<User> = {
+  newUser: NewUserForm = {
     username: '',
     email: '',
     password: '',
     role: 'user'
   };
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: FirebaseAuthService) {}
 
-  ngOnInit(): void {
-    this.loadUsers();
+  async ngOnInit(): Promise<void> {
+    await this.loadUsers();
   }
 
-  loadUsers(): void {
-    this.users = this.authService.getAllUsers();  // Zakładam, że ta metoda istnieje
+  async loadUsers(): Promise<void> {
+    this.users = await this.authService.getAllUsers();
   }
 
-  addUser(): void {
+  async addUser(): Promise<void> {
     if (!this.newUser.username || !this.newUser.email || !this.newUser.password) {
       alert('Wypełnij wszystkie wymagane pola');
       return;
     }
 
-    const success = this.authService.register({
-      username: this.newUser.username,
-      email: this.newUser.email,
-      password: this.newUser.password,
-      role: this.newUser.role || 'user',
-    });
-
-    if (success) {
+    try {
+      await this.authService.register(
+        this.newUser.email,
+        this.newUser.password,
+        this.newUser.username,
+        this.newUser.role
+      );
       alert('Użytkownik dodany');
       this.newUser = { username: '', email: '', password: '', role: 'user' };
-      this.loadUsers();
-    } else {
-      alert('Użytkownik o takim emailu już istnieje');
+      await this.loadUsers();
+    } catch (error: any) {
+      if (error.code === 'auth/email-already-in-use') {
+        alert('Użytkownik o takim emailu już istnieje');
+      } else {
+        alert('Wystąpił błąd podczas dodawania użytkownika');
+      }
     }
   }
 
-  deleteUser(userId: string): void {
-    this.authService.deleteUser(userId);  // Zakładam, że ta metoda istnieje
-    this.loadUsers();
+  async deleteUser(userId: string): Promise<void> {
+    await this.authService.deleteUser(userId);
+    await this.loadUsers();
   }
 }

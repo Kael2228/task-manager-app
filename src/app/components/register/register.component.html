@@ -3,26 +3,34 @@
     <h2>Rejestracja</h2>
 
     <label for="username">Nazwa użytkownika</label>
-    <input id="username" formControlName="username" required />
+    <input id="username" formControlName="username" placeholder="Nazwa użytkownika" />
+    <div *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.invalid" class="error">
+      Nazwa użytkownika jest wymagana i musi mieć co najmniej 3 znaki.
+    </div>
 
     <label for="email">Email</label>
-    <input id="email" formControlName="email" type="email" required />
+    <input id="email" type="email" formControlName="email" placeholder="Email" />
+    <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="error">
+      Proszę podać poprawny adres email.
+    </div>
 
     <label for="password">Hasło</label>
-    <input id="password" formControlName="password" type="password" required />
+    <input id="password" type="password" formControlName="password" placeholder="Hasło" />
+    <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="error">
+      Hasło jest wymagane i musi mieć co najmniej 6 znaków.
+    </div>
 
     <label for="confirmPassword">Potwierdź hasło</label>
-    <input id="confirmPassword" formControlName="confirmPassword" type="password" required />
+    <input id="confirmPassword" type="password" formControlName="confirmPassword" placeholder="Potwierdź hasło" />
+    <div *ngIf="registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched" class="error">
+      Hasła nie są takie same.
+    </div>
 
     <label for="role">Rola</label>
-    <select id="role" formControlName="role" required>
+    <select id="role" formControlName="role">
       <option value="user">Użytkownik</option>
       <option value="admin">Administrator</option>
     </select>
-
-    <div *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.touched" class="error">
-      Hasła nie są takie same.
-    </div>
 
     <button type="submit" [disabled]="registerForm.invalid">Zarejestruj się</button>
   </form>

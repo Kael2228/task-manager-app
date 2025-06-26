@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
+import { FirebaseAuthService } from '../services/firebase-auth.service';
 
-export function roleGuard(requiredRoles: string[]): CanActivateFn {
-  return () => {
-    const authService = inject(AuthService);
+export const roleGuard = (requiredRoles: string[]): CanActivateFn => {
+  return async () => {
+    const authService = inject(FirebaseAuthService);
     const router = inject(Router);
-    const user = authService.getCurrentUser();
+
+    const user = await authService.getCurrentUser();
 
     if (user && requiredRoles.includes(user.role)) {
       return true;
@@ -16,4 +16,4 @@ export function roleGuard(requiredRoles: string[]): CanActivateFn {
       return false;
     }
   };
-}
+};
