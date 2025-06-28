@@ -102,10 +102,13 @@ export class FirebaseAuthService {
     const snapshot = await getDocs(this.usersCollection);
     return snapshot.docs.map(doc => {
       const data = doc.data() as User & { createdAt?: any; updatedAt?: any };
+      const { id, ...restData } = data; // usuwamy id z data, by uniknąć nadpisania
+
       return {
-        ...data,
-        createdAt: data.createdAt && typeof data.createdAt.toDate === 'function' ? data.createdAt.toDate() : (data.createdAt ?? null),
-        updatedAt: data.updatedAt && typeof data.updatedAt.toDate === 'function' ? data.updatedAt.toDate() : (data.updatedAt ?? null)
+        id: doc.id,
+        ...restData,
+        createdAt: restData.createdAt && typeof restData.createdAt.toDate === 'function' ? restData.createdAt.toDate() : (restData.createdAt ?? null),
+        updatedAt: restData.updatedAt && typeof restData.updatedAt.toDate === 'function' ? restData.updatedAt.toDate() : (restData.updatedAt ?? null)
       };
     });
   }

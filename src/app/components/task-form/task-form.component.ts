@@ -10,7 +10,7 @@ import { Timestamp } from '@firebase/firestore'; // lub '@angular/fire/firestore
   standalone: true,
   templateUrl: './task-form.component.html',
   styleUrls: ['./task-form.component.scss'],
-  imports: [ReactiveFormsModule, CommonModule]
+  imports: [ReactiveFormsModule, CommonModule, ]
 })
 export class TaskFormComponent implements OnInit {
   @Input() taskToEdit: Task | null = null;

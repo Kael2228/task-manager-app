@@ -1,27 +1,44 @@
 .dashboard-container {
+  padding: 1rem;
   max-width: 600px;
-  margin: 50px auto;
+  margin: 0 auto;
   text-align: center;
 
   h2 {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+    font-style: italic;
+    color: #555;
   }
 
   .actions {
-    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
 
     button {
-      margin: 0.5rem;
-      padding: 0.75rem 1.5rem;
+      background-color: #007bff;
       border: none;
-      border-radius: 4px;
-      background-color: #1976d2;
       color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
       cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
 
       &:hover {
-        background-color: #1565c0;
+        background-color: #0056b3;
+      }
+
+      &:disabled {
+        background-color: #aaa;
+        cursor: not-allowed;
       }
     }
   }
+
+  
 }

@@ -1,4 +1,6 @@
 <div class="admin-panel-container">
+  <app-back-button></app-back-button>
+
   <h2>Panel Administratora</h2>
 
   <section>
@@ -6,7 +8,6 @@
     <table>
       <thead>
         <tr>
-          <th>Id</th>
           <th>Nazwa</th>
           <th>Email</th>
           <th>Rola</th>
@@ -15,8 +16,8 @@
       </thead>
       <tbody>
         <tr *ngFor="let user of users">
-          <td>{{ user.id }}</td>
-          <td>{{ user.username }}</td>
+          <td>{{ user.username  || 'Brak nazwy' }}</td>
+
           <td>{{ user.email }}</td>
           <td>{{ user.role }}</td>
           <td>

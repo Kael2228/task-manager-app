@@ -5,11 +5,12 @@ import { TaskService } from '../../services/task.service';
 import { User } from '../../models/user.model';
 import { Task } from '../../models/task.model';
 import { Router } from '@angular/router';
+import { gobackComponent } from '../goback/goback.component';
 
 @Component({
   selector: 'app-admin-panel',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, gobackComponent],
   templateUrl: './admin-panel.component.html',
   styleUrls: ['./admin-panel.component.scss']
 })
@@ -38,7 +39,8 @@ export class AdminPanelComponent implements OnInit {
 
   async loadTasks(): Promise<void> {
     try {
-      this.tasks = await this.taskService.getTasks();
+      // Pobieramy WSZYSTKIE zadania, aby admin mógł je przeglądać
+      this.tasks = await this.taskService.getAllTasks();
     } catch (error) {
       console.error('Błąd podczas ładowania zadań:', error);
     }

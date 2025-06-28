@@ -10,7 +10,6 @@ import {
   ValidationErrors
 } from '@angular/forms';
 import { Router } from '@angular/router';
-
 import { Auth, createUserWithEmailAndPassword, updateProfile } from '@angular/fire/auth';
 import { Firestore, doc, setDoc, serverTimestamp } from '@angular/fire/firestore';
 
@@ -23,7 +22,7 @@ const passwordMatchValidator: ValidatorFn = (control: AbstractControl): Validati
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
 })
