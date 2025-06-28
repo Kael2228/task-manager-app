@@ -3,7 +3,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   {
     path: 'dashboard',
     loadComponent: () => import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent),
@@ -42,6 +42,10 @@ export const routes: Routes = [
     path: 'register',
     loadComponent: () => import('./components/register/register.component').then(m => m.RegisterComponent)
   },
-  { path: '**', redirectTo: 'dashboard' }
-];
+  {
+  path: 'home',
+  loadComponent: () => import('./components/home/home.component').then(m => m.HomeComponent),
+  },
 
+  { path: '**', redirectTo: 'home' }
+];

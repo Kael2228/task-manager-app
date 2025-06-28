@@ -1,8 +1,9 @@
+// role.guard.ts
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { FirebaseAuthService } from '../services/firebase-auth.service';
 
-export const roleGuard = (requiredRoles: string[]): CanActivateFn => {
+export function roleGuard(requiredRoles: string[]): CanActivateFn {
   return async () => {
     const authService = inject(FirebaseAuthService);
     const router = inject(Router);
@@ -16,4 +17,4 @@ export const roleGuard = (requiredRoles: string[]): CanActivateFn => {
       return false;
     }
   };
-};
+}
