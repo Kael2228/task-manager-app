@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Task, Priority, Status } from '../../models/task.model';
 import { FirebaseAuthService } from '../../services/firebase-auth.service';
 import { CommonModule } from '@angular/common';
+import { Timestamp } from '@firebase/firestore'; // lub '@angular/fire/firestore'
 
 @Component({
   selector: 'app-task-form',
@@ -47,41 +48,55 @@ export class TaskFormComponent implements OnInit {
     }
   }
 
+  private convertToDateString(date: Date | Timestamp | null): string {
+    if (!date) return '';
+    if ((date as Timestamp).toDate) {
+      return (date as Timestamp).toDate().toISOString().substring(0, 10);
+    }
+    return (date as Date).toISOString().substring(0, 10);
+  }
+
   populateForm(task: Task): void {
     this.taskForm.patchValue({
       title: task.title,
       description: task.description,
       priority: task.priority,
       status: task.status,
-      dueDate: task.dueDate ? new Date(task.dueDate).toISOString().substring(0, 10) : '',
+      dueDate: this.convertToDateString(task.dueDate),
       assignedUser: task.assignedUser,
       tags: task.tags.join(', '),
       attachments: task.attachments.join(', ')
     });
   }
 
-  onSubmit(): void {
-    if (this.taskForm.invalid) return;
+private convertToDate(value: Date | Timestamp | null | undefined): Date | null {
+  if (!value) return null;
+  return (value as Timestamp).toDate ? (value as Timestamp).toDate() : (value as Date);
+}
 
-    const formValue = this.taskForm.value;
+onSubmit(): void {
+  if (this.taskForm.invalid) return;
 
-    const newTask: Task = {
-      id: this.taskToEdit ? this.taskToEdit.id : Date.now().toString(),
-      title: formValue.title,
-      description: formValue.description,
-      priority: formValue.priority,
-      status: formValue.status,
-      dueDate: new Date(formValue.dueDate),
-      createdAt: this.taskToEdit ? this.taskToEdit.createdAt : new Date(),
-      updatedAt: new Date(),
-      tags: formValue.tags ? formValue.tags.split(',').map((tag: string) => tag.trim()) : [],
-      assignedUser: formValue.assignedUser || this.currentUserEmail,
-      attachments: formValue.attachments ? formValue.attachments.split(',').map((a: string) => a.trim()) : [],
-      completedAt: this.taskToEdit?.completedAt || null
-    };
+  const formValue = this.taskForm.value;
 
-    this.formSubmit.emit(newTask);
-  }
+  const newTask: Task = {
+    id: this.taskToEdit ? this.taskToEdit.id : Date.now().toString(),
+    title: formValue.title,
+    description: formValue.description,
+    priority: formValue.priority,
+    status: formValue.status,
+    dueDate: formValue.dueDate ? new Date(formValue.dueDate) : null,
+    createdAt: this.convertToDate(this.taskToEdit?.createdAt) || new Date(),
+    updatedAt: new Date(),
+    tags: formValue.tags ? formValue.tags.split(',').map((tag: string) => tag.trim()) : [],
+    assignedUser: formValue.assignedUser || this.currentUserEmail,
+    attachments: formValue.attachments ? formValue.attachments.split(',').map((a: string) => a.trim()) : [],
+    completedAt: this.convertToDate(this.taskToEdit?.completedAt) || null
+  };
+
+  this.formSubmit.emit(newTask);
+}
+
 
   onCancel(): void {
     this.formCancel.emit();

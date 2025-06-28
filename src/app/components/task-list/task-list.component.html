@@ -52,10 +52,13 @@
       <p>{{ task.description }}</p>
       <p>Priorytet: {{ task.priority }}</p>
       <p>Status: {{ task.status }}</p>
-      <p>Termin: {{ task.dueDate | date }}</p>
+      <p>Termin: {{ convertToDate(task.dueDate) | date: 'yyyy-MM-dd' }}</p>
+
       <p>Przypisany: {{ task.assignedUser || 'Brak' }}</p>
 
-      <button (click)="markAsDone(task)" [disabled]="task.status === 'done'">Oznacz jako wykonane</button>
+      <button (click)="markAsDone(task)" [disabled]="task.status === 'done'">
+        Oznacz jako wykonane
+      </button>
       <button (click)="openEditForm(task)">Edytuj</button>
       <button (click)="deleteTask(task)">Usuń</button>
     </li>

@@ -1,4 +1,3 @@
-// role.guard.ts
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { FirebaseAuthService } from '../services/firebase-auth.service';

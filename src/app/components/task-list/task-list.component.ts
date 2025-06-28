@@ -1,42 +1,34 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule, DatePipe } from '@angular/common';
+
 import { Task, Priority, Status } from '../../models/task.model';
 import { TaskService } from '../../services/task.service';
-import { FirebaseAuthService } from '../../services/firebase-auth.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
 import { TaskFormComponent } from '../task-form/task-form.component';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, DatePipe, TaskFormComponent],
   templateUrl: './task-list.component.html',
-  styleUrls: ['./task-list.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, TaskFormComponent]
+  styleUrls: ['./task-list.component.scss']
 })
 export class TaskListComponent implements OnInit {
   tasks: Task[] = [];
   filteredTasks: Task[] = [];
 
   filterForm: FormGroup;
+  showForm = false;
+  editingTask: Task | null = null;
 
-  priorities = [Priority.low, Priority.medium, Priority.high];
-  statuses = [Status.todo, Status.in_progress, Status.done];
+  priorities = Object.values(Priority);
+  statuses = Object.values(Status);
 
-  sortField: 'priority' | 'dueDate' = 'dueDate';
+  sortField: 'priority' | 'dueDate' = 'priority';
   sortDirection: 'asc' | 'desc' = 'asc';
 
-  currentUserEmail = '';
-  currentUserRole: 'admin' | 'user' | null = null;
-
-  editingTask: Task | null = null;
-  showForm = false;
-
-  constructor(
-    private taskService: TaskService,
-    private authService: FirebaseAuthService,
-    private fb: FormBuilder
-  ) {
+  constructor(private taskService: TaskService, private fb: FormBuilder) {
     this.filterForm = this.fb.group({
       status: [''],
       priority: [''],
@@ -45,57 +37,46 @@ export class TaskListComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    const currentUser = await this.authService.getCurrentUser();
-    this.currentUserEmail = currentUser?.email || '';
-    this.currentUserRole = currentUser?.role || null;
-
-    this.loadTasks();
-
-    this.filterForm.valueChanges.subscribe(() => {
-      this.applyFilters();
-    });
+    await this.loadTasks();
+    this.filterForm.valueChanges.subscribe(() => this.applyFiltersAndSorting());
   }
 
-  loadTasks(): void {
-    const allTasks = this.taskService.getTasks();
-
-    if (this.currentUserRole === 'admin') {
-      this.tasks = allTasks;
-    } else {
-      this.tasks = allTasks.filter(t => t.assignedUser === this.currentUserEmail);
-    }
-
-    this.applyFilters();
+  async loadTasks(): Promise<void> {
+    this.tasks = await this.taskService.getTasks();
+    this.applyFiltersAndSorting();
   }
 
-  applyFilters(): void {
-    let filtered = [...this.tasks];
+  applyFiltersAndSorting(): void {
     const { status, priority, assignedUser } = this.filterForm.value;
 
-    if (status) {
-      filtered = filtered.filter(t => t.status === status as Status);
-    }
-    if (priority) {
-      filtered = filtered.filter(t => t.priority === priority as Priority);
-    }
-    if (assignedUser) {
-      filtered = filtered.filter(t => t.assignedUser === assignedUser);
-    }
-
-    this.filteredTasks = this.sortTasks(filtered);
+    this.filteredTasks = this.tasks
+      .filter(task => {
+        const statusMatch = !status || task.status === status;
+        const priorityMatch = !priority || task.priority === priority;
+        const userMatch = !assignedUser || task.assignedUser?.includes(assignedUser);
+        return statusMatch && priorityMatch && userMatch;
+      })
+      .sort((a, b) => this.compareTasks(a, b));
   }
 
-  sortTasks(tasks: Task[]): Task[] {
-    return tasks.sort((a, b) => {
-      let compare = 0;
-      if (this.sortField === 'priority') {
-        const priorityOrder = { low: 1, medium: 2, high: 3 };
-        compare = priorityOrder[a.priority] - priorityOrder[b.priority];
-      } else if (this.sortField === 'dueDate') {
-        compare = new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
-      }
-      return this.sortDirection === 'asc' ? compare : -compare;
-    });
+  compareTasks(a: Task, b: Task): number {
+    let compare = 0;
+
+    if (this.sortField === 'priority') {
+      const order = { low: 1, medium: 2, high: 3 };
+      compare = order[a.priority] - order[b.priority];
+    } else if (this.sortField === 'dueDate') {
+      const dateA = this.convertToDate(a.dueDate);
+      const dateB = this.convertToDate(b.dueDate);
+      compare = (dateA?.getTime() || 0) - (dateB?.getTime() || 0);
+    }
+
+    return this.sortDirection === 'asc' ? compare : -compare;
+  }
+
+  convertToDate(date: Date | Timestamp | null): Date | null {
+    if (!date) return null;
+    return date instanceof Timestamp ? date.toDate() : date;
   }
 
   setSort(field: 'priority' | 'dueDate'): void {
@@ -105,48 +86,48 @@ export class TaskListComponent implements OnInit {
       this.sortField = field;
       this.sortDirection = 'asc';
     }
-    this.applyFilters();
+    this.applyFiltersAndSorting();
   }
 
-  markAsDone(task: Task): void {
-    if (task.status !== Status.done) {
-      task.status = Status.done;
-      task.completedAt = new Date();
-      this.taskService.updateTask(task);
-      this.loadTasks();
-    }
-  }
-
-  deleteTask(task: Task): void {
-    if (this.currentUserRole === 'admin' || task.assignedUser === this.currentUserEmail) {
-      this.taskService.deleteTask(task.id);
-      this.loadTasks();
-    } else {
-      alert('Brak uprawnień do usunięcia tego zadania.');
-    }
-  }
-
-  openAddForm(): void {
-    this.editingTask = null;
-    this.showForm = true;
-  }
-
-  openEditForm(task: Task): void {
-    this.editingTask = task;
-    this.showForm = true;
-  }
-
-  onFormSubmit(task: Task): void {
+  async onFormSubmit(task: Task): Promise<void> {
     if (this.editingTask) {
-      this.taskService.updateTask(task);
+      await this.taskService.updateTask(task);
     } else {
-      this.taskService.addTask(task);
+      await this.taskService.addTask(task);
     }
     this.showForm = false;
-    this.loadTasks();
+    this.editingTask = null;
+    await this.loadTasks();
   }
 
   onFormCancel(): void {
     this.showForm = false;
+    this.editingTask = null;
   }
+
+  openAddForm(): void {
+    this.showForm = true;
+    this.editingTask = null;
+  }
+
+  openEditForm(task: Task): void {
+    this.showForm = true;
+    this.editingTask = task;
+  }
+
+  async deleteTask(task: Task): Promise<void> {
+    await this.taskService.deleteTask(task.id);
+    await this.loadTasks();
+  }
+
+  async markAsDone(task: Task): Promise<void> {
+    const updatedTask: Task = {
+      ...task,
+      status: Status.done,
+      completedAt: new Date()
+    };
+    await this.taskService.updateTask(updatedTask);
+    await this.loadTasks();
+  }
+  
 }

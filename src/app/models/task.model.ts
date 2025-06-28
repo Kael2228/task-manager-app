@@ -13,14 +13,15 @@ export enum Status {
 export interface Task {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   priority: Priority;
   status: Status;
-  dueDate: Date;
+  dueDate: Date | null;
   createdAt: Date;
   updatedAt: Date;
   tags: string[];
   assignedUser: string;
   attachments: string[];
-  completedAt: Date | null;
+  completedAt?: Date | null;
 }
+

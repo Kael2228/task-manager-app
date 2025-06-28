@@ -5,7 +5,7 @@
     Tytuł *
     <input formControlName="title" />
     <div *ngIf="taskForm.controls['title'].invalid && taskForm.controls['title'].touched" class="error">
-      Pole jest wymagane.
+      Tytuł jest wymagany (min. 3 znaki).
     </div>
   </label>
 
@@ -30,7 +30,14 @@
 
   <label>
     Termin realizacji *
-    <input type="date" formControlName="dueDate" />
+    <input
+      type="date"
+      formControlName="dueDate"
+      [value]="taskForm.get('dueDate')?.value | date:'yyyy-MM-dd'"
+    />
+    <div *ngIf="dueDate?.invalid && dueDate?.touched" class="error">
+      Termin realizacji jest wymagany.
+    </div>
   </label>
 
   <label>
@@ -49,7 +56,9 @@
   </label>
 
   <div class="buttons">
-    <button type="submit" [disabled]="taskForm.invalid">{{ taskToEdit ? 'Zapisz' : 'Dodaj' }}</button>
+    <button type="submit" [disabled]="taskForm.invalid">
+      {{ taskToEdit ? 'Zapisz' : 'Dodaj' }}
+    </button>
     <button type="button" (click)="onCancel()">Anuluj</button>
   </div>
 </form>
