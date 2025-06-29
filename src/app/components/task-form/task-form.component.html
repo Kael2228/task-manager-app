@@ -1,64 +1,64 @@
-<form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="task-form">
+<mat-card class="task-form-card">
   <h3>{{ taskToEdit ? 'Edytuj zadanie' : 'Dodaj nowe zadanie' }}</h3>
 
-  <label>
-    Tytuł *
-    <input formControlName="title" />
-    <div *ngIf="taskForm.controls['title'].invalid && taskForm.controls['title'].touched" class="error">
-      Tytuł jest wymagany (min. 3 znaki).
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="task-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Tytuł *</mat-label>
+      <input matInput formControlName="title" />
+      <mat-error *ngIf="title?.invalid && title?.touched">
+        Tytuł jest wymagany (min. 3 znaki).
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Opis</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Priorytet *</mat-label>
+      <mat-select formControlName="priority">
+        <mat-option *ngFor="let p of priorities" [value]="p">{{ p }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Status *</mat-label>
+      <mat-select formControlName="status">
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Termin realizacji *</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="dueDate" />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error *ngIf="dueDate?.invalid && dueDate?.touched">
+        Termin realizacji jest wymagany.
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Przypisany użytkownik</mat-label>
+      <input matInput formControlName="assignedUser" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Tagi (oddziel przecinkami)</mat-label>
+      <input matInput formControlName="tags" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Załączniki (linki, przecinkami)</mat-label>
+      <input matInput formControlName="attachments" />
+    </mat-form-field>
+
+    <div class="buttons">
+      <button mat-raised-button color="primary" type="submit" [disabled]="taskForm.invalid">
+        {{ taskToEdit ? 'Zapisz' : 'Dodaj' }}
+      </button>
+      <button mat-button type="button" (click)="onCancel()">Anuluj</button>
     </div>
-  </label>
-
-  <label>
-    Opis
-    <textarea formControlName="description"></textarea>
-  </label>
-
-  <label>
-    Priorytet *
-    <select formControlName="priority">
-      <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
-    </select>
-  </label>
-
-  <label>
-    Status *
-    <select formControlName="status">
-      <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
-    </select>
-  </label>
-
-  <label>
-    Termin realizacji *
-    <input
-      type="date"
-      formControlName="dueDate"
-      [value]="taskForm.get('dueDate')?.value | date:'yyyy-MM-dd'"
-    />
-    <div *ngIf="dueDate?.invalid && dueDate?.touched" class="error">
-      Termin realizacji jest wymagany.
-    </div>
-  </label>
-
-  <label>
-    Przypisany użytkownik (email)
-    <input formControlName="assignedUser" />
-  </label>
-
-  <label>
-    Tag-i (oddziel przecinkami)
-    <input formControlName="tags" />
-  </label>
-
-  <label>
-    Załączniki (linki, oddzielone przecinkami)
-    <input formControlName="attachments" />
-  </label>
-
-  <div class="buttons">
-    <button type="submit" [disabled]="taskForm.invalid">
-      {{ taskToEdit ? 'Zapisz' : 'Dodaj' }}
-    </button>
-    <button type="button" (click)="onCancel()">Anuluj</button>
-  </div>
-</form>
+  </form>
+</mat-card>

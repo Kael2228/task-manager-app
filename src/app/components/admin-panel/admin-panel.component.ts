@@ -5,15 +5,28 @@ import { TaskService } from '../../services/task.service';
 import { User } from '../../models/user.model';
 import { Task } from '../../models/task.model';
 import { Router } from '@angular/router';
-import { gobackComponent } from '../goback/goback.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { MatDividerModule } from '@angular/material/divider';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-admin-panel',
   standalone: true,
-  imports: [CommonModule, gobackComponent],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTableModule,
+    MatDividerModule
+  ],
   templateUrl: './admin-panel.component.html',
   styleUrls: ['./admin-panel.component.scss']
 })
+
 export class AdminPanelComponent implements OnInit {
   users: User[] = [];
   tasks: Task[] = [];
@@ -21,9 +34,12 @@ export class AdminPanelComponent implements OnInit {
   constructor(
     private authService: FirebaseAuthService,
     private taskService: TaskService,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {}
-
+  goBack(): void {
+    this.location.back();
+  }
   ngOnInit(): void {
     this.loadUsers();
     this.loadTasks();

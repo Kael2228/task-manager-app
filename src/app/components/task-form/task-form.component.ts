@@ -4,13 +4,32 @@ import { Task, Priority, Status } from '../../models/task.model';
 import { FirebaseAuthService } from '../../services/firebase-auth.service';
 import { CommonModule } from '@angular/common';
 import { Timestamp } from '@firebase/firestore'; // lub '@angular/fire/firestore'
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-task-form',
   standalone: true,
   templateUrl: './task-form.component.html',
   styleUrls: ['./task-form.component.scss'],
-  imports: [ReactiveFormsModule, CommonModule, ]
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatIconModule
+  ]
 })
 export class TaskFormComponent implements OnInit {
   @Input() taskToEdit: Task | null = null;

@@ -4,15 +4,21 @@ import { Router } from '@angular/router';
 import { User } from '../../models/user.model';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
-
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, ],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule
+  ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
+
 export class DashboardComponent implements OnInit, OnDestroy {
   user: User | null = null;
   private userSub?: Subscription;

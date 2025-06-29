@@ -5,11 +5,29 @@ import { FirebaseAuthService } from '../../services/firebase-auth.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TaskFormComponent } from '../task-form/task-form.component';
 import { CommonModule } from '@angular/common';
-import { gobackComponent } from '../goback/goback.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { Location } from '@angular/common';
+
+
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TaskFormComponent, gobackComponent],
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule, 
+    TaskFormComponent, 
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule
+  ],
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.scss']
 })
@@ -29,6 +47,7 @@ export class TaskListComponent implements OnInit {
   constructor(
     private taskService: TaskService,
     private authService: FirebaseAuthService,
+    private location: Location,
     private fb: FormBuilder
   ) {
     this.filterForm = this.fb.group({
@@ -36,6 +55,9 @@ export class TaskListComponent implements OnInit {
       priority: [''],
       assignedUser: ['']
     });
+  }
+  goBack(): void {
+    this.location.back();
   }
 
   ngOnInit(): void {

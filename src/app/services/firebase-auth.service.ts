@@ -32,7 +32,6 @@ export class FirebaseAuthService {
   constructor(private auth: Auth, private firestore: Firestore) {
     this.usersCollection = collection(this.firestore, 'users');
 
-    // Nasłuchuj zmiany stanu użytkownika tylko raz przy starcie serwisu
     onAuthStateChanged(this.auth, async (firebaseUser) => {
       if (!firebaseUser) {
         this.currentUserSubject.next(null);
@@ -93,7 +92,6 @@ export class FirebaseAuthService {
     return !!this.auth.currentUser;
   }
 
-  // Zwraca aktualną wartość użytkownika synchronnie
   getCurrentUser(): User | null {
     return this.currentUserSubject.getValue();
   }
@@ -102,7 +100,7 @@ export class FirebaseAuthService {
     const snapshot = await getDocs(this.usersCollection);
     return snapshot.docs.map(doc => {
       const data = doc.data() as User & { createdAt?: any; updatedAt?: any };
-      const { id, ...restData } = data; // usuwamy id z data, by uniknąć nadpisania
+      const { id, ...restData } = data; 
 
       return {
         id: doc.id,

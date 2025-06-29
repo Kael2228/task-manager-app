@@ -1,9 +1,22 @@
-<div class="home-container">
-  <h1>Witamy w aplikacji!</h1>
-  <p>To jest strona główna. Zaloguj się lub zarejestruj, aby kontynuować.</p>
+<div class="home-wrapper">
+  <mat-card class="home-card">
+    <mat-card-header>
+      <mat-card-title>Witamy w aplikacji!</mat-card-title>
+    </mat-card-header>
 
-  <div class="buttons">
-    <a routerLink="/login" class="btn">Zaloguj się</a>
-    <a routerLink="/register" class="btn">Zarejestruj się</a>
-  </div>
+    <mat-card-content>
+      <p>Zaloguj się lub zarejestruj, aby kontynuować.</p>
+    </mat-card-content>
+
+    <mat-card-actions class="buttons">
+      <a mat-raised-button color="primary" routerLink="/login">
+        <mat-icon>login</mat-icon>
+        Zaloguj się
+      </a>
+      <a mat-raised-button color="primary" routerLink="/register">
+        <mat-icon>person_add</mat-icon>
+        Zarejestruj się
+      </a>
+    </mat-card-actions>
+  </mat-card>
 </div>

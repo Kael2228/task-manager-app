@@ -1,56 +1,86 @@
-<div class="admin-panel-container">
-  <app-back-button></app-back-button>
+<mat-card class="admin-panel-card">
+  <div class="admin-panel-header">
+  <button mat-raised-button color="primary" (click)="goBack()" aria-label="Wróć">
+      <mat-icon>arrow_back</mat-icon>
+      Wróć
+    </button>
 
   <h2>Panel Administratora</h2>
+  </div>
+  <mat-divider></mat-divider>
 
-  <section>
+  <section class="admin-section">
     <h3>Użytkownicy</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Nazwa</th>
-          <th>Email</th>
-          <th>Rola</th>
-          <th>Akcje</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of users">
-          <td>{{ user.username  || 'Brak nazwy' }}</td>
+    <mat-card class="rounded-table-card">
+    <table mat-table [dataSource]="users" class="mat-elevation-z2">
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef>Nazwa</th>
+        <td mat-cell *matCellDef="let user">{{ user.username || 'Brak nazwy' }}</td>
+      </ng-container>
 
-          <td>{{ user.email }}</td>
-          <td>{{ user.role }}</td>
-          <td>
-            <button (click)="deleteUser(user.id)">Usuń</button>
-          </td>
-        </tr>
-      </tbody>
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef>Rola</th>
+        <td mat-cell *matCellDef="let user">{{ user.role }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Akcje</th>
+        <td mat-cell *matCellDef="let user">
+          <button mat-button color="warn" (click)="deleteUser(user.id)">
+            Usuń
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['username', 'email', 'role', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['username', 'email', 'role', 'actions']"></tr>
     </table>
+    </mat-card>
   </section>
 
-  <section>
+  <mat-divider></mat-divider>
+
+  <section class="admin-section">
     <h3>Zadania</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Id</th>
-          <th>Tytuł</th>
-          <th>Przypisany użytkownik</th>
-          <th>Status</th>
-          <th>Akcje</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let task of tasks">
-          <td>{{ task.id }}</td>
-          <td>{{ task.title }}</td>
-          <td>{{ task.assignedUser }}</td>
-          <td>{{ task.status }}</td>
-          <td>
-            <button (click)="deleteTask(task.id)">Usuń</button>
-          </td>
-        </tr>
-      </tbody>
+    <mat-card class="rounded-table-card">
+    <table mat-table [dataSource]="tasks" class="mat-elevation-z2">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let task">{{ task.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>Tytuł</th>
+        <td mat-cell *matCellDef="let task">{{ task.title }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="assignedUser">
+        <th mat-header-cell *matHeaderCellDef>Użytkownik</th>
+        <td mat-cell *matCellDef="let task">{{ task.assignedUser }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let task">{{ task.status }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Akcje</th>
+        <td mat-cell *matCellDef="let task">
+          <button mat-button color="warn" (click)="deleteTask(task.id)">
+            Usuń
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['id', 'title', 'assignedUser', 'status', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['id', 'title', 'assignedUser', 'status', 'actions']"></tr>
     </table>
+    </mat-card>
   </section>
-</div>
+</mat-card>
