@@ -16,6 +16,8 @@ Filtrowanie zadań
 Klonuj repozytorium:
 git clone https://github.com/Kael2228/task-manager-app.git
 
+cd task-manager-app
+
 Zainstaluj zależności:
 npm install
 
