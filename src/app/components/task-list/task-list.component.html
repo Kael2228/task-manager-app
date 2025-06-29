@@ -1,4 +1,3 @@
-  <!-- Filtry -->
   <mat-card class="task-list-card">
   <div class="task-header">
     <button mat-raised-button color="primary" (click)="goBack()" aria-label="Wróć">
@@ -19,7 +18,6 @@
     ></app-task-form>
   </mat-card>
 
-  <!-- Filtry -->
   <form [formGroup]="filterForm" class="filters">
     <mat-form-field appearance="outline">
       <mat-label>Status</mat-label>
@@ -43,7 +41,6 @@
     </mat-form-field>
   </form>
 
-  <!-- Sortowanie -->
   <div class="sorting">
     <button mat-button (click)="setSort('priority')">
       Sortuj po priorytecie
@@ -55,7 +52,6 @@
     </button>
   </div>
 
-  <!-- Lista zadań -->
   <div class="task-list">
     <mat-card *ngFor="let task of filteredTasks" class="task-item">
       <mat-card-title>{{ task.title }}</mat-card-title>

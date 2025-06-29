@@ -77,7 +77,6 @@ export class TaskListComponent implements OnInit {
       return;
     }
 
-    // Tutaj zmiana — niezależnie od roli pobieramy tylko zadania przypisane do aktualnego użytkownika
     this.tasks = await this.taskService.getTasksByUser(this.currentUserEmail);
 
     this.applyFilters();

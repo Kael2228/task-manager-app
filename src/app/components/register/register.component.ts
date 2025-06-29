@@ -35,13 +35,12 @@ const passwordMatchValidator: ValidatorFn = (control: AbstractControl): Validati
     CommonModule,
     ReactiveFormsModule,
 
-    // 🔹 Angular Material modules:
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
-    MatIconModule, // jeśli używasz <mat-icon>
+    MatIconModule,
   ]
 })
 

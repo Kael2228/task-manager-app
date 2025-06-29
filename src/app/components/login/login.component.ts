@@ -34,7 +34,7 @@ export class LoginComponent {
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private auth: Auth  // wstrzykujemy Auth z AngularFire
+    private auth: Auth
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],

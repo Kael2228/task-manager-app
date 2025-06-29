@@ -26,14 +26,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(private authService: FirebaseAuthService, private router: Router) {}
 
   ngOnInit(): void {
-    // Subskrybuj zmiany aktualnego użytkownika
     this.userSub = this.authService.currentUser$.subscribe(user => {
       this.user = user;
     });
   }
 
   ngOnDestroy(): void {
-    // Odsubskrybuj aby uniknąć wycieków pamięci
     this.userSub?.unsubscribe();
   }
 
